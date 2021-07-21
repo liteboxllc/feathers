@@ -53,6 +53,7 @@ export default class FluxVision {
       if (productDataset) {
         const formattedPrice = (Number(productDataset.price) / 100).toFixed(2);
         productDataset.price = formattedPrice;
+        productDataset.product_id = productDataset.name;
         const objectProduct = Object.assign({}, productDataset);
         productData.push(objectProduct);
       }
@@ -95,6 +96,7 @@ export default class FluxVision {
         checkout_id: checkoutDataset.checkoutId,
         order_id: checkoutDataset.orderNumber,
         total: checkoutDataset.totalPrice,
+        revenue: checkoutDataset.totalPrice,
         currency: "USD",
         products: productData,
       });
