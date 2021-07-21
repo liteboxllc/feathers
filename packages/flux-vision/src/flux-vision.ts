@@ -1,8 +1,17 @@
+interface ProductData {
+  quantity: Number,
+  price: Number,
+  product_id: String,
+  sku: String,
+  url: String,
+  name: String,
+}
+
 /* eslint-disable @typescript-eslint/camelcase */
 export default class FluxVision {
   htmlDataElements: string;
   checkoutDataset: DOMStringMap;
-  productData: DOMStringMap[];
+  productData: ProductData[];
   Shopify: { Checkout: { page: unknown; step: unknown } };
   analytics: SegmentAnalytics.AnalyticsJS;
   liquidDivSelector: string;
@@ -51,11 +60,17 @@ export default class FluxVision {
     for (let i = 0; i < productsDatasets.length; i++) {
       const productDataset = productsDatasets[i].dataset;
       if (productDataset) {
-        const formattedPrice = (Number(productDataset.price) / 100).toFixed(2);
-        productDataset.price = formattedPrice;
+        const formattedPrice = Number((Number(productDataset.price) / 100).toFixed(2));
         productDataset.product_id = productDataset.name;
         const objectProduct = Object.assign({}, productDataset);
-        productData.push(objectProduct);
+        productData.push({
+          quantity: Number(productDataset.quantity),
+          price: formattedPrice,
+          product_id: productDataset.product_id,
+          name: productDataset.name,
+          sku: productDataset.sku,
+          url: productDataset.url,
+        });
       }
     }
   }
