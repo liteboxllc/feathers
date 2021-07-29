@@ -12,22 +12,26 @@ export default class FluxVision {
   htmlDataElements: string;
   checkoutDataset: DOMStringMap;
   productData: ProductData[];
-  Shopify: { Checkout: { page: unknown; step: unknown } };
+  Shopify: { Checkout: { page: unknown; step: unknown; isOrderStatus: boolean } };
+  firstOrderStatusView: boolean;
   analytics: SegmentAnalytics.AnalyticsJS;
   liquidDivSelector: string;
 
   constructor({
     analytics,
     Shopify,
+    firstOrderStatusView = false,
     liquidDivSelector = "#FLUX_VISION_DATASETS",
   }) {
     this.productData = [];
     this.analytics = analytics;
     this.Shopify = Shopify;
+    this.firstOrderStatusView = firstOrderStatusView;
     this.liquidDivSelector = liquidDivSelector;
   }
 
-  public init(): void {
+  public init(firstOrderStatusView: boolean = false): void {
+    this.firstOrderStatusView = firstOrderStatusView;
     this.checkDomForSelector();
     this.pullDataFromDOM();
     this.sendAnalytics();
@@ -77,7 +81,7 @@ export default class FluxVision {
 
   private sendAnalytics(): void {
     const { analytics, checkoutDataset, productData } = this;
-    const { currentStep, currentPage } = this.getCurrentEnvironment();
+    const { currentStep, currentPage, isOrderStatus } = this.getCurrentEnvironment();
 
     switch (currentStep) {
       case "contact_information":
@@ -106,7 +110,7 @@ export default class FluxVision {
         break;
     }
 
-    if (currentPage == "thank_you") {
+    if (currentPage == "thank_you" || (isOrderStatus === true || this.firstOrderStatusView == true)) {
       analytics.track("Order Completed", {
         checkout_id: checkoutDataset.checkoutId,
         order_id: checkoutDataset.orderNumber,
@@ -115,18 +119,30 @@ export default class FluxVision {
         currency: "USD",
         products: productData,
       });
+
+      if (productData.filter(a => a.sku.startsWith("SI-LB")).length > 0) {
+        analytics.track("Liteboxer Ordered", {
+          checkout_id: checkoutDataset.checkoutId,
+          order_id: checkoutDataset.orderNumber,
+          total: checkoutDataset.totalPrice,
+          currency: "USD",
+          products: productData,
+        });
+      }
     }
   }
 
   private getCurrentEnvironment(): {
     currentStep: unknown;
     currentPage: unknown;
+    isOrderStatus: unknown;
   } {
     const { Shopify } = this;
 
     return {
       currentStep: Shopify.Checkout.step,
       currentPage: Shopify.Checkout.page,
+      isOrderStatus: Shopify.Checkout.isOrderStatus
     };
   }
 }
