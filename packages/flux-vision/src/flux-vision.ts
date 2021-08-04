@@ -64,7 +64,7 @@ export default class FluxVision {
     for (let i = 0; i < productsDatasets.length; i++) {
       const productDataset = productsDatasets[i].dataset;
       if (productDataset) {
-        const formattedPrice = Number((Number(productDataset.price) / 100).toFixed(2));
+        const formattedPrice = Number(productDataset.price) / 100;
         productDataset.product_id = productDataset.name;
         const objectProduct = Object.assign({}, productDataset);
         productData.push({
@@ -114,8 +114,8 @@ export default class FluxVision {
       analytics.track("Order Completed", {
         checkout_id: checkoutDataset.checkoutId,
         order_id: checkoutDataset.orderNumber,
-        total: checkoutDataset.totalPrice,
-        revenue: checkoutDataset.totalPrice,
+        total: Number(checkoutDataset.totalPrice) / 100,
+        revenue: Number(checkoutDataset.totalPrice) / 100,
         currency: "USD",
         products: productData,
       });
@@ -124,7 +124,7 @@ export default class FluxVision {
         analytics.track("Liteboxer Ordered", {
           checkout_id: checkoutDataset.checkoutId,
           order_id: checkoutDataset.orderNumber,
-          total: checkoutDataset.totalPrice,
+          total: Number(checkoutDataset.totalPrice) / 100,
           currency: "USD",
           products: productData,
         });
