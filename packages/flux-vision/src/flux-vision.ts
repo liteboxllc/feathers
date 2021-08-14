@@ -5,6 +5,7 @@ interface ProductData {
   sku: String,
   url: String,
   name: String,
+  category: String,
 }
 
 /* eslint-disable @typescript-eslint/camelcase */
@@ -74,6 +75,7 @@ export default class FluxVision {
           name: productDataset.name,
           sku: productDataset.sku,
           url: productDataset.url,
+          category: productDataset.category,
         });
       }
     }
