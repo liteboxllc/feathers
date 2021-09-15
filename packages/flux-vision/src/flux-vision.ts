@@ -92,6 +92,7 @@ export default class FluxVision {
           value: checkoutDataset.orderPrice,
           currency: "USD",
           products: productData,
+          source: "website",
         });
         break;
       case "shipping_method":
@@ -99,6 +100,7 @@ export default class FluxVision {
           checkout_id: checkoutDataset.checkoutId,
           step: 2,
           products: productData,
+          source: "website",
         });
         break;
       case "payment_method":
@@ -106,6 +108,7 @@ export default class FluxVision {
           checkout_id: checkoutDataset.checkoutId,
           step: 3,
           products: productData,
+          source: "website",
         });
         break;
       default:
@@ -120,6 +123,7 @@ export default class FluxVision {
         revenue: Number(checkoutDataset.totalPrice) / 100,
         currency: "USD",
         products: productData,
+        source: "website",
       });
 
       if (productData.filter(a => a.sku.startsWith("SI-LB")).length > 0) {
@@ -129,6 +133,7 @@ export default class FluxVision {
           total: Number(checkoutDataset.totalPrice) / 100,
           currency: "USD",
           products: productData,
+          source: "website",
         });
       }
     }
